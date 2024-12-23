@@ -1,0 +1,6 @@
+pyinstaller
+keyring
+artifacts-keyring
+pyside6
+numpy
+sounddevice

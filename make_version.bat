@@ -1,0 +1,1 @@
+dotnet-gitversion.exe /output json > version.json

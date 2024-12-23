@@ -1,0 +1,41 @@
+pool:
+  vmImage: windows-latest
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.11'
+
+- script: install_requirements.bat
+  displayName: 'Install requirements'
+
+- script: qt_build.bat
+  displayName: 'Build Qt files'
+
+- task: gitversion/setup@3
+  displayName: Setup gitversion
+  inputs:
+    versionSpec: '6.0.4'
+
+- task: gitversion/execute@3
+  displayName: Determine Version
+
+- script: make_version.bat
+  displayName: 'Make version file'
+
+- script: pyinstaller --onefile --add-data "version.json:." FT93_ProductionTools.py
+  displayName: 'Build application'
+
+- script: ren dist\FT93_ProductionTools.exe FT93_ProductionTools_v$(FullSemVer).exe
+  displayName: 'Renaming executable'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: 'dist'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'FT93_ProductionTools_v$(FullSemVer)'
+    publishLocation: 'Container'

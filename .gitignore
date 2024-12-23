@@ -1,0 +1,5 @@
+__pycache__
+*.log
+ui_*
+gitversion.exe
+version.json
